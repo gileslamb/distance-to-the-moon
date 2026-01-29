@@ -5,15 +5,39 @@ import * as THREE from "three";
 
 const STAR_COUNT = 7000;
 const ROTATION_SPEED = { frantic: 0.02, relaxed: 0.002, otherworldly: 0.001 } as const;
+const MOUSE_LERP = 0.05;
+const MOUSE_INFLUENCE = 0.05;
+
 type Mood = "relaxed" | "frantic" | "otherworldly";
 
 interface StarfieldProps {
   mood?: Mood;
+  sizeMultiplier?: number;
   className?: string;
 }
 
-export default function Starfield({ mood = "relaxed", className = "" }: StarfieldProps) {
+export default function Starfield({
+  mood = "relaxed",
+  sizeMultiplier = 1,
+  className = "",
+}: StarfieldProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const pointsRef = useRef<THREE.Points | null>(null);
+  const rotationSpeedRef = useRef(ROTATION_SPEED[mood]);
+  const baseRotationXRef = useRef(0);
+  const baseRotationYRef = useRef(0);
+  const mouseTargetRef = useRef({ x: 0, y: 0 });
+  const mouseCurrentRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    rotationSpeedRef.current = ROTATION_SPEED[mood ?? "relaxed"];
+  }, [mood]);
+
+  useEffect(() => {
+    const mat = materialRef.current;
+    if (mat?.uniforms?.uSizeMultiplier) mat.uniforms.uSizeMultiplier.value = sizeMultiplier;
+  }, [sizeMultiplier]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -55,16 +79,18 @@ export default function Starfield({ mood = "relaxed", className = "" }: Starfiel
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uScale: { value: 40 },
+        uSizeMultiplier: { value: sizeMultiplier },
       },
       vertexShader: `
         attribute float size;
         attribute vec3 color;
         varying vec3 vColor;
         uniform float uScale;
+        uniform float uSizeMultiplier;
         void main() {
           vColor = color;
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size * uScale;
+          gl_PointSize = size * uScale * uSizeMultiplier;
           gl_Position = projectionMatrix * mvPosition;
         }
       `,
@@ -73,22 +99,44 @@ export default function Starfield({ mood = "relaxed", className = "" }: Starfiel
         void main() {
           vec2 c = gl_PointCoord - 0.5;
           if (dot(c, c) > 0.25) discard;
-          gl_FragColor = vec4(vColor, 0.8);
+          gl_FragColor = vec4(vColor, 0.5);
         }
       `,
       transparent: true,
       depthWrite: true,
     });
 
+    materialRef.current = material;
     const points = new THREE.Points(geometry, material);
+    pointsRef.current = points;
     scene.add(points);
 
-    const speed = ROTATION_SPEED[mood ?? "relaxed"];
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      mouseTargetRef.current = { x, y: -y };
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
 
     function animate() {
       requestAnimationFrame(animate);
-      points.rotation.y += speed;
-      points.rotation.x += speed * 0.3;
+
+      const pts = pointsRef.current;
+      if (!pts) return;
+
+      const { x: tx, y: ty } = mouseTargetRef.current;
+      const cur = mouseCurrentRef.current;
+      cur.x += (tx - cur.x) * MOUSE_LERP;
+      cur.y += (ty - cur.y) * MOUSE_LERP;
+
+      const speed = rotationSpeedRef.current;
+      baseRotationXRef.current += speed * 0.3;
+      baseRotationYRef.current += speed;
+
+      pts.rotation.x = baseRotationXRef.current + cur.y * MOUSE_INFLUENCE;
+      pts.rotation.y = baseRotationYRef.current + cur.x * MOUSE_INFLUENCE;
+
       renderer.render(scene, camera);
     }
     animate();
@@ -103,12 +151,15 @@ export default function Starfield({ mood = "relaxed", className = "" }: Starfiel
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      materialRef.current = null;
+      pointsRef.current = null;
       geometry.dispose();
       material.dispose();
       renderer.dispose();
       container.removeChild(renderer.domElement);
     };
-  }, [mood]);
+  }, []);
 
   return <div ref={containerRef} className={className} style={{ width: "100%", height: "100%" }} />;
 }
