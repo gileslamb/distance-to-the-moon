@@ -35,21 +35,49 @@ export default function Starfield({ mood = "relaxed", className = "" }: Starfiel
     container.appendChild(renderer.domElement);
 
     const positions = new Float32Array(STAR_COUNT * 3);
-    for (let i = 0; i < STAR_COUNT * 3; i += 3) {
-      positions[i] = (Math.random() * 2 - 1) * 50;
-      positions[i + 1] = (Math.random() * 2 - 1) * 50;
-      positions[i + 2] = (Math.random() * 2 - 1) * 50;
+    const sizes = new Float32Array(STAR_COUNT);
+    const colors = new Float32Array(STAR_COUNT * 3);
+    for (let i = 0; i < STAR_COUNT; i++) {
+      positions[i * 3] = (Math.random() * 2 - 1) * 50;
+      positions[i * 3 + 1] = (Math.random() * 2 - 1) * 50;
+      positions[i * 3 + 2] = (Math.random() * 2 - 1) * 50;
+      sizes[i] = 0.2 + Math.random() * 0.3;
+      colors[i * 3] = 1;
+      colors[i * 3 + 1] = 1;
+      colors[i * 3 + 2] = 1;
     }
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-    const material = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.2,
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uScale: { value: 40 },
+      },
+      vertexShader: `
+        attribute float size;
+        attribute vec3 color;
+        varying vec3 vColor;
+        uniform float uScale;
+        void main() {
+          vColor = color;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * uScale;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vColor;
+        void main() {
+          vec2 c = gl_PointCoord - 0.5;
+          if (dot(c, c) > 0.25) discard;
+          gl_FragColor = vec4(vColor, 0.8);
+        }
+      `,
       transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: false,
+      depthWrite: true,
     });
 
     const points = new THREE.Points(geometry, material);
