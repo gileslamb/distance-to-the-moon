@@ -8,10 +8,10 @@ interface ParallaxContainerProps {
 }
 
 function getParallaxStrength(child: React.ReactElement): number {
-  const props = child?.props ?? {};
-  const raw =
-    props["data-parallax-strength"] ??
-    (props as { parallaxStrength?: number }).parallaxStrength;
+const props = child?.props ?? {};
+const raw =
+  (props as any)["data-parallax-strength"] ??
+  (props as { parallaxStrength?: number }).parallaxStrength;
   const n = Number(raw);
   return Number.isFinite(n) ? Math.min(2, Math.max(0, n)) : 0;
 }
