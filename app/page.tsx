@@ -46,7 +46,9 @@ export default function Home() {
 
       {view === "home" && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <h1 className="text-white text-8xl font-thin tracking-[0.3em] uppercase">
+          <h1
+            className="text-white font-thin uppercase whitespace-nowrap text-[clamp(1.5rem,6vw,6rem)] tracking-[clamp(0.1em,0.5vw,0.3em)]"
+          >
             Distance to the Moon
           </h1>
         </div>

@@ -7,8 +7,8 @@ interface StarSpeedControlProps {
 
 export default function StarSpeedControl({ speedMultiplier, onSpeedChange }: StarSpeedControlProps) {
   return (
-    <div className="absolute top-48 right-[1.625rem] flex flex-col items-center gap-2 text-white font-thin bg-transparent">
-      <span className="uppercase opacity-80 text-sm tracking-wide">STAR SPEED</span>
+    <div className="absolute top-8 right-28 flex flex-col items-center gap-2 text-white font-thin bg-transparent">
+      <span className="uppercase opacity-100 text-sm tracking-wide">STAR SPEED</span>
       <div className="h-32 w-6 flex items-center justify-center">
         <input
           type="range"
