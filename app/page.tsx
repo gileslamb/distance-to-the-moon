@@ -5,6 +5,7 @@ import type { Mood } from "@/lib/types";
 import { SoundscapeManager } from "@/lib/soundscapeManager";
 import Starfield from "@/components/Starfield";
 import StarSizeControl from "@/components/StarSizeControl";
+import StarSpeedControl from "@/components/StarSpeedControl";
 import MoodControl from "@/components/MoodControl";
 import MusicPlayer from "@/components/MusicPlayer";
 import MusicControls from "@/components/MusicControls";
@@ -15,6 +16,7 @@ import AlbumMenu from "@/components/AlbumMenu";
 export default function Home() {
   const [mood, setMood] = useState<Mood>("relaxed");
   const [starSizeMultiplier, setStarSizeMultiplier] = useState(1);
+  const [starSpeedMultiplier, setStarSpeedMultiplier] = useState(1);
   const [view, setView] = useState<View>("home");
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [playRequest, setPlayRequest] = useState(0);
@@ -40,7 +42,7 @@ export default function Home() {
 
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">
-      <Starfield key={starfieldKey} mood={mood} sizeMultiplier={starSizeMultiplier} />
+      <Starfield key={starfieldKey} mood={mood} sizeMultiplier={starSizeMultiplier} speedMultiplier={starSpeedMultiplier} />
 
       {view === "home" && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -70,6 +72,7 @@ export default function Home() {
 
       <MusicControls isMuted={isMuted} onMuteToggle={handleMuteToggle} onReseed={handleReseed} />
       <StarSizeControl sizeMultiplier={starSizeMultiplier} onSizeChange={setStarSizeMultiplier} />
+      <StarSpeedControl speedMultiplier={starSpeedMultiplier} onSpeedChange={setStarSpeedMultiplier} />
       <MoodControl mood={mood} onMoodChange={setMood} />
       <NavigationMenu view={view} onViewChange={setView} />
     </main>

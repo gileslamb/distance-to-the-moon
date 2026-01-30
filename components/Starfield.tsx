@@ -13,18 +13,22 @@ type Mood = "relaxed" | "frantic" | "otherworldly";
 interface StarfieldProps {
   mood?: Mood;
   sizeMultiplier?: number;
+  speedMultiplier?: number;
   className?: string;
 }
 
 export default function Starfield({
   mood = "relaxed",
   sizeMultiplier = 1,
+  speedMultiplier = 1,
   className = "",
 }: StarfieldProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
   const pointsRef = useRef<THREE.Points | null>(null);
   const rotationSpeedRef = useRef(ROTATION_SPEED[mood]);
+  const speedMultiplierRef = useRef(speedMultiplier);
+  speedMultiplierRef.current = speedMultiplier;
   const baseRotationXRef = useRef(0);
   const baseRotationYRef = useRef(0);
   const mouseTargetRef = useRef({ x: 0, y: 0 });
@@ -131,8 +135,9 @@ export default function Starfield({
       cur.y += (ty - cur.y) * MOUSE_LERP;
 
       const speed = rotationSpeedRef.current;
-      baseRotationXRef.current += speed * 0.3;
-      baseRotationYRef.current += speed;
+      const mult = speedMultiplierRef.current;
+      baseRotationXRef.current += speed * 0.3 * mult;
+      baseRotationYRef.current += speed * mult;
 
       pts.rotation.x = baseRotationXRef.current + cur.y * MOUSE_INFLUENCE;
       pts.rotation.y = baseRotationYRef.current + cur.x * MOUSE_INFLUENCE;
