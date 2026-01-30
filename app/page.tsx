@@ -12,6 +12,8 @@ import NavigationMenu, { type View } from "@/components/NavigationMenu";
 import FilmInfo from "@/components/FilmInfo";
 import AlbumMenu from "@/components/AlbumMenu";
 import DriftingMoon from "@/components/DriftingMoon";
+import DriftingJacket from "@/components/DriftingJacket";
+import DriftingOtherworldly from "@/components/DriftingOtherworldly";
 
 export default function Home() {
   const [starSizeMultiplier, setStarSizeMultiplier] = useState(1);
@@ -72,6 +74,8 @@ export default function Home() {
     <main className="relative w-full h-screen overflow-hidden bg-black">
       <Starfield key={starfieldKey} mood="relaxed" sizeMultiplier={starSizeMultiplier} speedMultiplier={starSpeedMultiplier} sensitivity={mouseSensitivity} />
       <DriftingMoon sensitivity={mouseSensitivity} />
+      <DriftingJacket sensitivity={mouseSensitivity} />
+      <DriftingOtherworldly sensitivity={mouseSensitivity} />
 
       {view === "home" && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
