@@ -21,21 +21,49 @@ export default function Home() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [playRequest, setPlayRequest] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [starfieldKey, setStarfieldKey] = useState(0);
   const soundscapeRef = useRef<SoundscapeManager | null>(null);
+  const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
 
   if (!soundscapeRef.current) soundscapeRef.current = new SoundscapeManager();
   const soundscape = soundscapeRef.current;
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const audio = new Audio("/souundscape/DTTM_Soundscape.mp3");
+    audio.loop = true;
+    audio.volume = 0.15; // Set before storing in ref - 15% volume for ambient level
+    backgroundAudioRef.current = audio;
+    if (!isMuted) audio.play().catch(() => {});
+    return () => {
+      audio.pause();
+      backgroundAudioRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     soundscape.setGlobalMute(isMuted);
     if (!isMuted) soundscape.start();
+    if (backgroundAudioRef.current) backgroundAudioRef.current.muted = isMuted;
   }, [isMuted, soundscape]);
 
   const handlePlayStateChange = (playing: boolean) => {
+    setIsMusicPlaying(playing);
     if (playing) soundscape.fadeOut();
     else soundscape.fadeIn();
   };
+
+  useEffect(() => {
+    const audio = backgroundAudioRef.current;
+    if (!audio) return;
+    if (isMusicPlaying) {
+      audio.pause();
+    } else if (!isMuted) {
+      audio.volume = 0.15; // Ensure 15% volume when resuming
+      audio.play().catch(() => {});
+    }
+  }, [isMusicPlaying, isMuted]);
 
   const handleMuteToggle = () => setIsMuted((m) => !m);
   const handleReseed = () => setStarfieldKey((k) => k + 1);
