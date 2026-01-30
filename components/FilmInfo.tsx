@@ -39,7 +39,7 @@ export default function FilmInfo() {
 
   return (
     <div
-      className="absolute left-8 top-1/2 -translate-y-1/2 max-w-md font-thin text-sm text-white brightness-200 backdrop-blur-[2px] whitespace-pre-wrap border border-white/20 rounded-lg p-6 bg-black/20 tracking-wider"
+      className="absolute left-8 top-1/2 -translate-y-1/2 max-w-md font-medium text-sm text-white brightness-200 backdrop-blur-[2px] whitespace-pre-wrap border border-white/20 rounded-lg p-6 bg-black/70 tracking-wider"
       style={{ maxHeight: "70vh", overflow: "auto" }}
     >
       {display}

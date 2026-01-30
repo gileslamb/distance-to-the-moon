@@ -123,37 +123,37 @@ export default function MusicPlayer({
   };
 
   return (
-    <div className="fixed top-8 left-8 flex flex-col gap-2 font-thin text-sm text-white tracking-wider uppercase backdrop-blur-[2px] max-w-[280px]">
+    <div className="fixed top-8 left-8 flex flex-col gap-2 font-medium text-sm text-white brightness-150 tracking-wider uppercase backdrop-blur-[2px] max-w-[280px] bg-black/60 rounded-lg p-3">
       <audio ref={audioRef} preload="metadata" />
       {!isPlaying ? (
         <button
           type="button"
           onClick={togglePlay}
-          className="px-5 py-2.5 rounded border border-white/30 bg-white/5 hover:bg-white/10 transition font-thin tracking-wider uppercase"
+          className="px-5 py-2.5 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
         >
           Play
         </button>
       ) : (
         <>
-          <p className="tabular-nums">
+          <p className="tabular-nums font-semibold">
             {displayTitle}
             {!typingDone && <span className="animate-pulse">|</span>}
           </p>
-          <p className="text-white/70 tabular-nums text-sm">
+          <p className="text-white tabular-nums text-sm">
             {formatTime(currentTime)} / {duration > 0 ? formatTime(duration) : "—:—"}
           </p>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={togglePlay}
-              className="px-4 py-2 rounded border border-white/30 bg-white/5 hover:bg-white/10 transition font-thin tracking-wider uppercase"
+              className="px-4 py-2 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
             >
               Pause
             </button>
             <button
               type="button"
               onClick={next}
-              className="px-4 py-2 rounded border border-white/30 bg-white/5 hover:bg-white/10 transition font-thin tracking-wider uppercase"
+              className="px-4 py-2 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
             >
               Next
             </button>

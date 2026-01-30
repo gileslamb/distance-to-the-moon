@@ -8,18 +8,18 @@ interface MusicControlsProps {
 
 export default function MusicControls({ isMuted, onMuteToggle, onReseed }: MusicControlsProps) {
   return (
-    <div className="fixed bottom-16 right-8 flex gap-3 font-thin text-sm text-white/80 tracking-wider uppercase">
+    <div className="fixed bottom-16 right-8 flex gap-3 font-medium text-sm text-white brightness-150 tracking-wider uppercase">
       <button
         type="button"
         onClick={onMuteToggle}
-        className="px-3 py-1.5 rounded bg-white/5 backdrop-blur-[2px] border border-white/20 hover:bg-white/10 transition"
+        className="px-3 py-1.5 rounded bg-black/60 backdrop-blur-[2px] border border-white/20 hover:bg-black/80 transition"
       >
         {isMuted ? "Unmute" : "Mute"}
       </button>
       <button
         type="button"
         onClick={onReseed}
-        className="px-3 py-1.5 rounded bg-white/5 backdrop-blur-[2px] border border-white/20 hover:bg-white/10 transition"
+        className="px-3 py-1.5 rounded bg-black/60 backdrop-blur-[2px] border border-white/20 hover:bg-black/80 transition"
       >
         Reseed
       </button>
