@@ -11,9 +11,15 @@ import MusicControls from "@/components/MusicControls";
 import NavigationMenu, { type View } from "@/components/NavigationMenu";
 import FilmInfo from "@/components/FilmInfo";
 import AlbumMenu from "@/components/AlbumMenu";
-import DriftingMoon from "@/components/DriftingMoon";
-import DriftingJacket from "@/components/DriftingJacket";
-import DriftingOtherworldly from "@/components/DriftingOtherworldly";
+import DriftingElement from "@/components/DriftingElement";
+
+// Add transparent PNGs here. Each drifts bottom-to-top with random angles and parallax.
+// Example future additions: ladder, character, book, graphophone, whale, fish, teddy bear, earth
+const DRIFTING_ELEMENTS = [
+  { imagePath: "/stills/moon.png", name: "Moon", minDelay: 3000, maxDelay: 10000, minScale: 0.3, maxScale: 2, zIndex: 5 },
+  { imagePath: "/stills/jacket.png", name: "Jacket", minDelay: 12000, maxDelay: 28000, minScale: 0.3, maxScale: 2, zIndex: 6 },
+  { imagePath: "/stills/Otherworldly.png", name: "Otherworldly", minDelay: 22000, maxDelay: 40000, minScale: 0.3, maxScale: 2, zIndex: 7 },
+];
 
 export default function Home() {
   const [starSizeMultiplier, setStarSizeMultiplier] = useState(1);
@@ -73,9 +79,13 @@ export default function Home() {
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">
       <Starfield key={starfieldKey} mood="relaxed" sizeMultiplier={starSizeMultiplier} speedMultiplier={starSpeedMultiplier} sensitivity={mouseSensitivity} />
-      <DriftingMoon sensitivity={mouseSensitivity} />
-      <DriftingJacket sensitivity={mouseSensitivity} />
-      <DriftingOtherworldly sensitivity={mouseSensitivity} />
+      {DRIFTING_ELEMENTS.map((el) => (
+        <DriftingElement
+          key={el.name}
+          {...el}
+          sensitivity={mouseSensitivity}
+        />
+      ))}
 
       {view === "home" && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
