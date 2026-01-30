@@ -31,3 +31,33 @@ body {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+
+@keyframes moon-drift {
+  0% {
+    left: var(--moon-start-x, 50%);
+    top: var(--moon-start-y, 95%);
+    transform: translate(-50%, -50%) scale(var(--moon-start-scale, 2)) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    left: var(--moon-end-x, 50%);
+    top: var(--moon-end-y, -15%);
+    transform: translate(-50%, -50%) scale(var(--moon-end-scale, 0.35)) rotate(var(--moon-rotation, 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes moon-wobble {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+}

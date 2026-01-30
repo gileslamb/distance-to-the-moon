@@ -5,15 +5,13 @@ import * as THREE from "three";
 
 const STAR_COUNT = 7000;
 const ROTATION_SPEED = { frantic: 0.02, relaxed: 0.002, otherworldly: 0.001 } as const;
-const MOUSE_LERP = 0.05;
-const MOUSE_INFLUENCE = 0.05;
-
 type Mood = "relaxed" | "frantic" | "otherworldly";
 
 interface StarfieldProps {
   mood?: Mood;
   sizeMultiplier?: number;
   speedMultiplier?: number;
+  sensitivity?: number;
   className?: string;
 }
 
@@ -21,6 +19,7 @@ export default function Starfield({
   mood = "relaxed",
   sizeMultiplier = 1,
   speedMultiplier = 1,
+  sensitivity = 0.33,
   className = "",
 }: StarfieldProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +28,8 @@ export default function Starfield({
   const rotationSpeedRef = useRef(ROTATION_SPEED[mood]);
   const speedMultiplierRef = useRef(speedMultiplier);
   speedMultiplierRef.current = speedMultiplier;
+  const sensitivityRef = useRef(sensitivity);
+  sensitivityRef.current = sensitivity;
   const baseRotationXRef = useRef(0);
   const baseRotationYRef = useRef(0);
   const mouseTargetRef = useRef({ x: 0, y: 0 });
@@ -84,6 +85,7 @@ export default function Starfield({
       uniforms: {
         uScale: { value: 40 },
         uSizeMultiplier: { value: sizeMultiplier },
+        uMouseOffset: { value: new THREE.Vector2(0, 0) },
       },
       vertexShader: `
         attribute float size;
@@ -91,9 +93,12 @@ export default function Starfield({
         varying vec3 vColor;
         uniform float uScale;
         uniform float uSizeMultiplier;
+        uniform vec2 uMouseOffset;
         void main() {
           vColor = color;
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          float depthMult = 1.0 + position.z * 0.02;
+          vec3 offsetPos = position + vec3(uMouseOffset.x * depthMult * 2.0, uMouseOffset.y * depthMult * 2.0, 0.0);
+          vec4 mvPosition = modelViewMatrix * vec4(offsetPos, 1.0);
           gl_PointSize = size * uScale * uSizeMultiplier;
           gl_Position = projectionMatrix * mvPosition;
         }
@@ -129,18 +134,30 @@ export default function Starfield({
       const pts = pointsRef.current;
       if (!pts) return;
 
+      const sens = sensitivityRef.current;
+      // effectStrength: 0.33 = original subtle (0), 1.0 = current powerful (1), 2.0 = max (~2.5)
+      const effectStrength = Math.max(0, (sens - 0.33) / 0.67);
+      const lerp = 0.05 + effectStrength * 0.15;
+      const influence = 0.05 + effectStrength * 0.1;
+      const parallaxScale = effectStrength * 35;
+
       const { x: tx, y: ty } = mouseTargetRef.current;
       const cur = mouseCurrentRef.current;
-      cur.x += (tx - cur.x) * MOUSE_LERP;
-      cur.y += (ty - cur.y) * MOUSE_LERP;
+      cur.x += (tx - cur.x) * lerp;
+      cur.y += (ty - cur.y) * lerp;
 
       const speed = rotationSpeedRef.current;
       const mult = speedMultiplierRef.current;
       baseRotationXRef.current += speed * 0.3 * mult;
       baseRotationYRef.current += speed * mult;
 
-      pts.rotation.x = baseRotationXRef.current + cur.y * MOUSE_INFLUENCE;
-      pts.rotation.y = baseRotationYRef.current + cur.x * MOUSE_INFLUENCE;
+      pts.rotation.x = baseRotationXRef.current + cur.y * influence;
+      pts.rotation.y = baseRotationYRef.current + cur.x * influence;
+
+      const mat = materialRef.current;
+      if (mat?.uniforms?.uMouseOffset) {
+        mat.uniforms.uMouseOffset.value.set(cur.x * parallaxScale, cur.y * parallaxScale);
+      }
 
       renderer.render(scene, camera);
     }
