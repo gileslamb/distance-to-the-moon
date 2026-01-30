@@ -42,7 +42,7 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect }: AlbumMen
 
   return (
     <div
-      className="absolute left-8 top-1/2 -translate-y-1/2 max-w-md font-thin text-sm text-white/90 backdrop-blur-[2px] border border-white/20 rounded-lg p-6 bg-black/20 tracking-wider uppercase"
+      className="absolute left-8 top-1/2 -translate-y-1/2 max-w-md font-thin text-sm text-white brightness-200 backdrop-blur-[2px] border border-white/20 rounded-lg p-6 bg-black/20 tracking-wider uppercase"
       style={{ maxHeight: "70vh", overflow: "auto" }}
     >
       <ul className="space-y-2">
@@ -61,7 +61,7 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect }: AlbumMen
           </li>
         ))}
       </ul>
-      <div className="mt-8 pt-6 border-t border-white/20 text-white/80 text-xs tracking-widest">
+      <div className="mt-8 pt-6 border-t border-white/20 text-white text-xs tracking-widest">
         <p>Stream / Buy: Spotify | Bandcamp</p>
         <a href="#" target="_blank" rel="noopener noreferrer" className="text-[#00ff00] hover:underline mr-2">
           Spotify

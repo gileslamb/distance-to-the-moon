@@ -15,7 +15,7 @@ import AlbumMenu from "@/components/AlbumMenu";
 export default function Home() {
   const [mood, setMood] = useState<Mood>("relaxed");
   const [starSizeMultiplier, setStarSizeMultiplier] = useState(1);
-  const [view, setView] = useState<View>("listen");
+  const [view, setView] = useState<View>("home");
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [playRequest, setPlayRequest] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
@@ -42,7 +42,7 @@ export default function Home() {
     <main className="relative w-full h-screen overflow-hidden bg-black">
       <Starfield key={starfieldKey} mood={mood} sizeMultiplier={starSizeMultiplier} />
 
-      {view === "listen" && (
+      {view === "home" && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <h1 className="text-white text-8xl font-thin tracking-[0.3em] uppercase">
             Distance to the Moon
@@ -51,7 +51,7 @@ export default function Home() {
       )}
 
       {view === "film" && <FilmInfo />}
-      {view === "music" && (
+      {view === "album" && (
         <AlbumMenu
           currentTrackIndex={currentTrackIndex}
           onTrackSelect={(index) => {
