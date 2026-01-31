@@ -62,7 +62,7 @@ body {
   75% { transform: translateX(-4px); }
 }
 
-/* Horizontal swimmers: left-to-right with sinusoidal vertical wave (top animates for wave) */
+/* Horizontal swimmers: left-to-right, very slow subtle vertical drift, no wave, no scale */
 @keyframes swim-horizontal {
   0% {
     left: -15%;
@@ -70,48 +70,21 @@ body {
     opacity: 0;
   }
   5% {
-    top: calc(var(--swim-base-y, 40%) - 2%);
-  }
-  8% {
-    opacity: 0.5;
-  }
-  25% {
-    top: calc(var(--swim-base-y, 40%) - 5%);
+    opacity: 0.6;
   }
   50% {
-    top: var(--swim-base-y, 40%);
     opacity: 0.65;
   }
-  75% {
-    top: calc(var(--swim-base-y, 40%) + 5%);
-  }
-  92% {
-    opacity: 0.5;
-  }
   95% {
-    top: calc(var(--swim-base-y, 40%) - 2%);
+    opacity: 0.55;
   }
   100% {
     left: 115%;
-    top: var(--swim-base-y, 40%);
-    opacity: 0;
+    top: calc(var(--swim-base-y, 40%) + var(--swim-drift, 0%));
+    opacity: 0.4;
   }
 }
 
-@keyframes swim-wave-slow {
-  0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-12px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(12px); }
-}
-
-@keyframes swim-wave-fast {
-  0%, 100% { transform: translateY(0); }
-  20% { transform: translateY(-8px); }
-  40% { transform: translateY(0); }
-  60% { transform: translateY(8px); }
-  80% { transform: translateY(0); }
-}
 
 /* Poster/cover drift: scale down 1→0.2, fade out over 35s */
 @keyframes poster-drift {

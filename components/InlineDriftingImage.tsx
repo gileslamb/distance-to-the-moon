@@ -81,8 +81,8 @@ export default function InlineDriftingImage({ src, alt, onBack, sensitivity = 0.
               style={{
                 width: "auto",
                 height: "auto",
-                maxWidth: "90vw",
-                maxHeight: "70vh",
+                maxWidth: "min(60vw, 100%)",
+                maxHeight: "min(50vh, 100%)",
                 objectFit: "contain",
               }}
             />

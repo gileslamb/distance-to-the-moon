@@ -26,11 +26,11 @@ const DRIFTING_ELEMENTS = [
   { imagePath: "/stills/x%20fall.png", name: "X Fall", minDelay: 210000, maxDelay: 300000, minScale: 0.3, maxScale: 2, zIndex: 12 },
 ];
 
-// Horizontal swimmers: left-to-right with wave motion. Spaced 90-180s between.
+// Horizontal swimmers: left-to-right with subtle drift. Spaced 90-180s between.
 const SWIMMING_ELEMENTS = [
-  { imagePath: "/stills/fish%201.png", name: "Fish 1", minDelay: 20000, maxDelay: 80000, waveAnim: "fast" as const, zIndex: 4 },
-  { imagePath: "/stills/fish%202.png", name: "Fish 2", minDelay: 70000, maxDelay: 130000, waveAnim: "fast" as const, zIndex: 4 },
-  { imagePath: "/stills/whale.png", name: "Whale", minDelay: 120000, maxDelay: 200000, waveAnim: "slow" as const, zIndex: 4 },
+  { imagePath: "/stills/fish%201.png", name: "Fish 1", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 0.5, zIndex: 4 },
+  { imagePath: "/stills/fish%202.png", name: "Fish 2", minDelay: 70000, maxDelay: 130000, sizeMultiplier: 0.5, zIndex: 4 },
+  { imagePath: "/stills/whale.png", name: "Whale", minDelay: 120000, maxDelay: 200000, sizeMultiplier: 2, zIndex: 4 },
 ];
 
 export default function Home() {
