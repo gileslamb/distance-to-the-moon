@@ -8,7 +8,7 @@ interface MusicControlsProps {
 
 export default function MusicControls({ isMuted, onMuteToggle, onReseed }: MusicControlsProps) {
   return (
-    <div className="fixed bottom-16 right-8 flex gap-3 font-medium text-sm text-white brightness-150 tracking-wider uppercase">
+    <div className="fixed bottom-8 right-8 flex gap-3 font-medium text-sm text-white brightness-150 tracking-wider uppercase">
       <button
         type="button"
         onClick={onMuteToggle}

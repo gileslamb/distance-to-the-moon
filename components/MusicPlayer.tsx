@@ -3,17 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trackList } from "@/lib/musicData";
 
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
 interface MusicPlayerProps {
   currentTrackIndex?: number;
   onTrackChange?: (index: number) => void;
   onPlayStateChange?: (isPlaying: boolean) => void;
   playRequest?: number;
+  isMuted?: boolean;
 }
 
 export default function MusicPlayer({
@@ -21,6 +16,7 @@ export default function MusicPlayer({
   onTrackChange,
   onPlayStateChange,
   playRequest = 0,
+  isMuted = false,
 }: MusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [internalIndex, setInternalIndex] = useState(0);
@@ -47,6 +43,11 @@ export default function MusicPlayer({
   useEffect(() => {
     applyTrack(currentTrackIndex);
   }, [currentTrackIndex, applyTrack]);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (el) el.muted = isMuted;
+  }, [isMuted]);
 
   useEffect(() => {
     if (isPlaying && audioRef.current) audioRef.current.play().catch(() => {});
@@ -96,16 +97,10 @@ export default function MusicPlayer({
         if (i === full.length) setTypingDone(true);
         i++;
       } else clearInterval(id);
-    }, 35);
+    }, 12); /* Same as all typing: 12ms (40% faster than original 20ms) */
     return () => clearInterval(id);
   }, [isPlaying, track.title]);
 
-  useEffect(() => {
-    if (!isPlaying) {
-      setDisplayTitle("");
-      setTypingDone(false);
-    }
-  }, [isPlaying]);
 
   const togglePlay = () => {
     const el = audioRef.current;
@@ -122,40 +117,39 @@ export default function MusicPlayer({
     setCurrentTrackIndex(nextIndex);
   };
 
+  const hasStartedPlayback = displayTitle.length > 0 || isPlaying;
+
   return (
-    <div className="fixed top-8 left-8 flex flex-col gap-2 font-medium text-sm text-white brightness-150 tracking-wider uppercase backdrop-blur-[2px] max-w-[280px] bg-black/60 rounded-lg p-3">
+    <div className="fixed top-8 left-8 flex flex-col gap-2 font-medium text-sm text-white brightness-150 tracking-wider uppercase backdrop-blur-[2px] bg-black/60 rounded-lg px-4 py-3">
       <audio ref={audioRef} preload="metadata" />
-      {!isPlaying ? (
+      {!hasStartedPlayback ? (
         <button
           type="button"
           onClick={togglePlay}
-          className="px-5 py-2.5 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
+          className="rounded transition hover:underline text-left"
         >
-          Play
+          Play Album
         </button>
       ) : (
         <>
-          <p className="tabular-nums font-semibold">
-            {displayTitle}
-            {!typingDone && <span className="animate-pulse">|</span>}
+          <p className="tabular-nums font-semibold truncate max-w-[280px]" style={{ color: "#C9A961" }}>
+            {isPlaying ? (displayTitle || track.title) : track.title}
+            {!typingDone && isPlaying && <span className="animate-pulse">|</span>}
           </p>
-          <p className="text-white tabular-nums text-sm">
-            {formatTime(currentTime)} / {duration > 0 ? formatTime(duration) : "—:—"}
-          </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-6">
             <button
               type="button"
               onClick={togglePlay}
-              className="px-4 py-2 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
+              className="text-white/90 hover:text-white hover:underline transition"
             >
-              Pause
+              {isPlaying ? "Pause" : "Play"}
             </button>
             <button
               type="button"
               onClick={next}
-              className="px-4 py-2 rounded border border-white/30 bg-black/80 hover:bg-black transition font-medium tracking-wider uppercase"
+              className="text-white/90 hover:text-white hover:underline transition"
             >
-              Next
+              Next →
             </button>
           </div>
         </>

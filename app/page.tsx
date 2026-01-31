@@ -12,13 +12,25 @@ import NavigationMenu, { type View } from "@/components/NavigationMenu";
 import FilmInfo from "@/components/FilmInfo";
 import AlbumMenu from "@/components/AlbumMenu";
 import DriftingElement from "@/components/DriftingElement";
+import DriftingSwimmer from "@/components/DriftingSwimmer";
 
-// Add transparent PNGs here. Each drifts bottom-to-top with random angles and parallax.
-// Example future additions: ladder, character, book, graphophone, whale, fish, teddy bear, earth
+// Vertical floaters: bottom-to-top, rare appearances (60-120s between). Stagger initials over ~5 min.
 const DRIFTING_ELEMENTS = [
-  { imagePath: "/stills/moon.png", name: "Moon", minDelay: 3000, maxDelay: 10000, minScale: 0.3, maxScale: 2, zIndex: 5 },
-  { imagePath: "/stills/jacket.png", name: "Jacket", minDelay: 12000, maxDelay: 28000, minScale: 0.3, maxScale: 2, zIndex: 6 },
-  { imagePath: "/stills/Otherworldly.png", name: "Otherworldly", minDelay: 22000, maxDelay: 40000, minScale: 0.3, maxScale: 2, zIndex: 7 },
+  { imagePath: "/stills/moon.png", name: "Moon", minDelay: 0, maxDelay: 30000, minScale: 0.3, maxScale: 2, zIndex: 5 },
+  { imagePath: "/stills/jacket.png", name: "Jacket", minDelay: 30000, maxDelay: 60000, minScale: 0.3, maxScale: 2, zIndex: 6 },
+  { imagePath: "/stills/Otherworldly.png", name: "Otherworldly", minDelay: 60000, maxDelay: 90000, minScale: 0.3, maxScale: 2, zIndex: 7 },
+  { imagePath: "/stills/gramophone.png", name: "Gramophone", minDelay: 90000, maxDelay: 120000, minScale: 0.3, maxScale: 2, zIndex: 8 },
+  { imagePath: "/stills/ladder.png", name: "Ladder", minDelay: 120000, maxDelay: 150000, minScale: 0.3, maxScale: 2, zIndex: 9 },
+  { imagePath: "/stills/ladders.png", name: "Ladders", minDelay: 150000, maxDelay: 180000, minScale: 0.3, maxScale: 2, zIndex: 10 },
+  { imagePath: "/stills/whale%20back.png", name: "Whale Back", minDelay: 180000, maxDelay: 210000, minScale: 0.3, maxScale: 2, zIndex: 11 },
+  { imagePath: "/stills/x%20fall.png", name: "X Fall", minDelay: 210000, maxDelay: 300000, minScale: 0.3, maxScale: 2, zIndex: 12 },
+];
+
+// Horizontal swimmers: left-to-right with wave motion. Spaced 90-180s between.
+const SWIMMING_ELEMENTS = [
+  { imagePath: "/stills/fish%201.png", name: "Fish 1", minDelay: 20000, maxDelay: 80000, waveAnim: "fast" as const, zIndex: 4 },
+  { imagePath: "/stills/fish%202.png", name: "Fish 2", minDelay: 70000, maxDelay: 130000, waveAnim: "fast" as const, zIndex: 4 },
+  { imagePath: "/stills/whale.png", name: "Whale", minDelay: 120000, maxDelay: 200000, waveAnim: "slow" as const, zIndex: 4 },
 ];
 
 export default function Home() {
@@ -79,6 +91,13 @@ export default function Home() {
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">
       <Starfield key={starfieldKey} mood="relaxed" sizeMultiplier={starSizeMultiplier} speedMultiplier={starSpeedMultiplier} sensitivity={mouseSensitivity} />
+      {SWIMMING_ELEMENTS.map((el) => (
+        <DriftingSwimmer
+          key={el.name}
+          {...el}
+          sensitivity={mouseSensitivity}
+        />
+      ))}
       {DRIFTING_ELEMENTS.map((el) => (
         <DriftingElement
           key={el.name}
@@ -97,7 +116,7 @@ export default function Home() {
         </div>
       )}
 
-      {view === "film" && <FilmInfo />}
+      {view === "film" && <FilmInfo onBackToHome={() => setView("home")} sensitivity={mouseSensitivity} />}
       {view === "album" && (
         <AlbumMenu
           currentTrackIndex={currentTrackIndex}
@@ -105,6 +124,8 @@ export default function Home() {
             setCurrentTrackIndex(index);
             setPlayRequest((r) => r + 1);
           }}
+          onBackToHome={() => setView("home")}
+          sensitivity={mouseSensitivity}
         />
       )}
 
@@ -113,6 +134,7 @@ export default function Home() {
         onTrackChange={setCurrentTrackIndex}
         onPlayStateChange={handlePlayStateChange}
         playRequest={playRequest}
+        isMuted={isMuted}
       />
 
       <MusicControls isMuted={isMuted} onMuteToggle={handleMuteToggle} onReseed={handleReseed} />

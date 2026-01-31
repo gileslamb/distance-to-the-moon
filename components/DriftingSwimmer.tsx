@@ -3,53 +3,33 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-interface DriftParams {
-  startX: string;
-  endX: string;
-  startY: string;
-  endY: string;
-  startScale: number;
-  endScale: number;
-  rotation: number;
-}
-
-export interface DriftingElementConfig {
+export interface DriftingSwimmerConfig {
   imagePath: string;
   name: string;
   minDelay: number;
   maxDelay: number;
-  minScale: number;
-  maxScale: number;
+  waveAnim: "slow" | "fast";
   zIndex?: number;
 }
 
-interface DriftingElementProps extends DriftingElementConfig {
+interface DriftingSwimmerProps extends DriftingSwimmerConfig {
   sensitivity?: number;
 }
 
-const DRIFT_DURATION = 54000;
+const SWIM_DURATION = 50000; // 50s slow horizontal drift
 const PARALLAX_FACTOR = 0.3 * 15;
 
-export default function DriftingElement({
+export default function DriftingSwimmer({
   imagePath,
   name,
   minDelay,
   maxDelay,
-  minScale,
-  maxScale,
-  zIndex = 5,
+  waveAnim = "slow",
+  zIndex = 4,
   sensitivity = 0.33,
-}: DriftingElementProps) {
-  const [isDrifting, setIsDrifting] = useState(false);
-  const [driftParams, setDriftParams] = useState<DriftParams>({
-    startX: "50%",
-    endX: "50%",
-    startY: "95%",
-    endY: "-15%",
-    startScale: maxScale,
-    endScale: minScale,
-    rotation: 360,
-  });
+}: DriftingSwimmerProps) {
+  const [isSwimming, setIsSwimming] = useState(false);
+  const [baseY, setBaseY] = useState("40%");
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const mouseRef = useRef({ x: 0, y: 0 });
   const mouseCurrentRef = useRef({ x: 0, y: 0 });
@@ -85,42 +65,28 @@ export default function DriftingElement({
 
   useEffect(() => {
     let isFirst = true;
-    const scheduleNextDrift = () => {
+    const scheduleNextSwim = () => {
       const delay = isFirst
         ? minDelay + Math.random() * (maxDelay - minDelay)
-        : 60000 + Math.random() * 60000; // 60-120s between appearances
+        : 90000 + Math.random() * 90000; // 90-180s between swims
       isFirst = false;
       const t = setTimeout(() => {
-        const startXPercent = 15 + Math.random() * 70;
-        const angleOffset = (Math.random() - 0.5) * 40;
-        const endXPercent = startXPercent + angleOffset;
-        const rotationDir = Math.random() > 0.5 ? 1 : -1;
-        const rotation = rotationDir * (300 + Math.random() * 180);
-
-        const startScale = maxScale * (0.8 + Math.random() * 0.2);
-        const endScale = minScale * (1 + Math.random() * 0.3);
-
-        setDriftParams({
-          startX: `${startXPercent}%`,
-          endX: `${Math.max(5, Math.min(95, endXPercent))}%`,
-          startY: "95%",
-          endY: `${-10 - Math.random() * 15}%`,
-          startScale,
-          endScale,
-          rotation,
-        });
-        setIsDrifting(true);
+        setBaseY(`${25 + Math.random() * 50}%`); // Random vertical lane 25-75%
+        setIsSwimming(true);
 
         setTimeout(() => {
-          setIsDrifting(false);
-          scheduleNextDrift();
-        }, DRIFT_DURATION);
+          setIsSwimming(false);
+          scheduleNextSwim();
+        }, SWIM_DURATION);
       }, delay);
       return () => clearTimeout(t);
     };
-    const cleanup = scheduleNextDrift();
+    const cleanup = scheduleNextSwim();
     return cleanup;
-  }, [minDelay, maxDelay, minScale, maxScale]);
+  }, [minDelay, maxDelay]);
+
+  const waveKeyframes = waveAnim === "fast" ? "swim-wave-fast" : "swim-wave-slow";
+  const waveDuration = waveAnim === "fast" ? 2.5 : 4;
 
   return (
     <div
@@ -135,35 +101,31 @@ export default function DriftingElement({
         }}
       >
         <div
-          className={`absolute ${isDrifting ? "opacity-100" : "opacity-0"}`}
+          className={`absolute ${isSwimming ? "opacity-100" : "opacity-0"}`}
           style={{
-            "--moon-start-x": driftParams.startX,
-            "--moon-end-x": driftParams.endX,
-            "--moon-start-y": driftParams.startY,
-            "--moon-end-y": driftParams.endY,
-            "--moon-start-scale": driftParams.startScale,
-            "--moon-end-scale": driftParams.endScale,
-            "--moon-rotation": `${driftParams.rotation}deg`,
-            animation: isDrifting
-              ? `moon-drift ${DRIFT_DURATION / 1000}s cubic-bezier(0.22, 0.61, 0.36, 1) forwards`
+            "--swim-base-y": baseY,
+            animation: isSwimming
+              ? `swim-horizontal ${SWIM_DURATION / 1000}s ease-in-out forwards`
               : "none",
             transition: "opacity 1.5s ease-in-out",
           } as React.CSSProperties}
         >
           <div
             style={
-              isDrifting
-                ? { animation: "moon-wobble 4s ease-in-out infinite" }
+              isSwimming
+                ? {
+                    animation: `${waveKeyframes} ${waveDuration}s ease-in-out infinite`,
+                  }
                 : undefined
             }
           >
             <Image
               src={imagePath}
               alt={name}
-              width={280}
-              height={280}
+              width={200}
+              height={120}
               unoptimized
-              className="opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.25)]"
+              className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
               style={{ objectFit: "contain" }}
             />
           </div>
