@@ -68,7 +68,7 @@ export function TypingText({
   const { displayedText, isDone } = useTypingText(text, TYPING_INTERVAL);
 
   if ((goldRanges && goldRanges.length > 0) || (linkRanges && linkRanges.length > 0)) {
-    const spans = getSpans(displayedText, goldRanges, linkRanges, goldColor);
+    const spans = getSpans(displayedText, goldRanges ?? [], linkRanges, goldColor);
     return (
       <div className={`whitespace-pre-wrap ${className}`} style={{ filter: "none" }}>
         {spans.map((s, i) =>
