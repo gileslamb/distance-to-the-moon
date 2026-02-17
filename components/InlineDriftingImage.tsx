@@ -63,12 +63,13 @@ export default function InlineDriftingImage({ src, alt, onBack, sensitivity = 0.
       </button>
       <div className="flex-1 flex items-center justify-center min-h-0 relative overflow-hidden">
         <div
-          className="absolute left-1/2 top-1/2 flex items-center justify-center"
+          className="absolute inset-0 flex items-center justify-center"
           style={{
-            transform: `translate(calc(-50% + ${parallax.x}px), calc(-50% + ${parallax.y}px))`,
+            transform: `translate(${parallax.x}px, ${parallax.y}px)`,
           }}
         >
           <div
+            className="w-full h-full flex items-center justify-center"
             style={{
               animation: `poster-drift ${DRIFT_DURATION / 1000}s ease-in-out forwards`,
             }}
@@ -77,12 +78,10 @@ export default function InlineDriftingImage({ src, alt, onBack, sensitivity = 0.
             <img
               src={src}
               alt={alt}
-              className="opacity-90 drop-shadow-2xl object-contain"
+              className="opacity-90 drop-shadow-2xl"
               style={{
-                width: "auto",
-                height: "auto",
-                maxWidth: "min(60vw, 100%)",
-                maxHeight: "min(50vh, 100%)",
+                maxWidth: "100%",
+                maxHeight: "100%",
                 objectFit: "contain",
               }}
             />

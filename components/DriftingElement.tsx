@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 
 interface DriftParams {
   startX: string;
@@ -21,6 +21,10 @@ export interface DriftingElementConfig {
   minScale: number;
   maxScale: number;
   zIndex?: number;
+  sequenceFolder?: string;
+  frameStart?: number;
+  frameEnd?: number;
+  fps?: number;
 }
 
 interface DriftingElementProps extends DriftingElementConfig {
@@ -39,6 +43,10 @@ export default function DriftingElement({
   maxScale,
   zIndex = 5,
   sensitivity = 0.33,
+  sequenceFolder,
+  frameStart = 1,
+  frameEnd = 1,
+  fps = 12,
 }: DriftingElementProps) {
   const [isDrifting, setIsDrifting] = useState(false);
   const [driftParams, setDriftParams] = useState<DriftParams>({
@@ -53,6 +61,56 @@ export default function DriftingElement({
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const mouseRef = useRef({ x: 0, y: 0 });
   const mouseCurrentRef = useRef({ x: 0, y: 0 });
+
+  const animImgRef = useRef<HTMLImageElement | null>(null);
+  const frameIndexRef = useRef(0);
+
+  const framePaths = useMemo(() => {
+    if (!sequenceFolder) return [];
+    const paths: string[] = [];
+    for (let i = frameStart; i <= frameEnd; i++) {
+      paths.push(`${sequenceFolder}/frame_${String(i).padStart(4, "0")}.png`);
+    }
+    return paths;
+  }, [sequenceFolder, frameStart, frameEnd]);
+
+  const isAnimated = framePaths.length > 0;
+
+  // Preload sequence frames
+  useEffect(() => {
+    if (!isAnimated) return;
+    framePaths.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = src;
+    });
+  }, [framePaths, isAnimated]);
+
+  // Cycle frames at fps while drifting (direct DOM, no re-renders)
+  useEffect(() => {
+    if (!isDrifting || !isAnimated || framePaths.length === 0) {
+      frameIndexRef.current = 0;
+      return;
+    }
+    const intervalMs = 1000 / fps;
+    const interval = setInterval(() => {
+      frameIndexRef.current =
+        (frameIndexRef.current + 1) % framePaths.length;
+      if (animImgRef.current) {
+        animImgRef.current.src = framePaths[frameIndexRef.current];
+      }
+    }, intervalMs);
+    return () => clearInterval(interval);
+  }, [isDrifting, isAnimated, framePaths, fps]);
+
+  const setImgRef = useCallback(
+    (el: HTMLImageElement | null) => {
+      animImgRef.current = el;
+      if (el && framePaths.length > 0) {
+        el.src = framePaths[0];
+      }
+    },
+    [framePaths]
+  );
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -88,7 +146,7 @@ export default function DriftingElement({
     const scheduleNextDrift = () => {
       const delay = isFirst
         ? minDelay + Math.random() * (maxDelay - minDelay)
-        : 60000 + Math.random() * 60000; // 60-120s between appearances
+        : 60000 + Math.random() * 60000;
       isFirst = false;
       const t = setTimeout(() => {
         const startXPercent = 15 + Math.random() * 70;
@@ -157,15 +215,27 @@ export default function DriftingElement({
                 : undefined
             }
           >
-            <Image
-              src={imagePath}
-              alt={name}
-              width={280}
-              height={280}
-              unoptimized
-              className="opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.25)]"
-              style={{ objectFit: "contain" }}
-            />
+            {isAnimated ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                ref={setImgRef}
+                alt={name}
+                width={280}
+                height={280}
+                className="opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.25)]"
+                style={{ objectFit: "contain", width: 280, height: 280 }}
+              />
+            ) : (
+              <Image
+                src={imagePath}
+                alt={name}
+                width={280}
+                height={280}
+                unoptimized
+                className="opacity-60 drop-shadow-[0_0_40px_rgba(255,255,255,0.25)]"
+                style={{ objectFit: "contain" }}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,22 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 
 export interface DriftingSwimmerConfig {
   imagePath: string;
   name: string;
   minDelay: number;
   maxDelay: number;
-  sizeMultiplier?: number; // 0.5 = half, 2 = double
+  sizeMultiplier?: number;
   zIndex?: number;
+  sequenceFolder?: string;
+  frameStart?: number;
+  frameEnd?: number;
+  fps?: number;
 }
 
 interface DriftingSwimmerProps extends DriftingSwimmerConfig {
   sensitivity?: number;
 }
 
-const SWIM_DURATION = 55000; // 55s slow horizontal drift
+const SWIM_DURATION = 55000;
 const PARALLAX_FACTOR = 0.3 * 15;
 const BASE_WIDTH = 200;
 const BASE_HEIGHT = 120;
@@ -29,6 +33,10 @@ export default function DriftingSwimmer({
   sizeMultiplier = 1,
   zIndex = 4,
   sensitivity = 0.33,
+  sequenceFolder,
+  frameStart = 1,
+  frameEnd = 1,
+  fps = 12,
 }: DriftingSwimmerProps) {
   const [isSwimming, setIsSwimming] = useState(false);
   const [baseY, setBaseY] = useState("40%");
@@ -36,6 +44,56 @@ export default function DriftingSwimmer({
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const mouseRef = useRef({ x: 0, y: 0 });
   const mouseCurrentRef = useRef({ x: 0, y: 0 });
+
+  const animImgRef = useRef<HTMLImageElement | null>(null);
+  const frameIndexRef = useRef(0);
+
+  const framePaths = useMemo(() => {
+    if (!sequenceFolder) return [];
+    const paths: string[] = [];
+    for (let i = frameStart; i <= frameEnd; i++) {
+      paths.push(`${sequenceFolder}/frame_${String(i).padStart(4, "0")}.png`);
+    }
+    return paths;
+  }, [sequenceFolder, frameStart, frameEnd]);
+
+  const isAnimated = framePaths.length > 0;
+
+  // Preload sequence frames
+  useEffect(() => {
+    if (!isAnimated) return;
+    framePaths.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = src;
+    });
+  }, [framePaths, isAnimated]);
+
+  // Cycle frames at fps while swimming (direct DOM, no re-renders)
+  useEffect(() => {
+    if (!isSwimming || !isAnimated || framePaths.length === 0) {
+      frameIndexRef.current = 0;
+      return;
+    }
+    const intervalMs = 1000 / fps;
+    const interval = setInterval(() => {
+      frameIndexRef.current =
+        (frameIndexRef.current + 1) % framePaths.length;
+      if (animImgRef.current) {
+        animImgRef.current.src = framePaths[frameIndexRef.current];
+      }
+    }, intervalMs);
+    return () => clearInterval(interval);
+  }, [isSwimming, isAnimated, framePaths, fps]);
+
+  const setImgRef = useCallback(
+    (el: HTMLImageElement | null) => {
+      animImgRef.current = el;
+      if (el && framePaths.length > 0) {
+        el.src = framePaths[0];
+      }
+    },
+    [framePaths]
+  );
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -75,7 +133,6 @@ export default function DriftingSwimmer({
       isFirst = false;
       const t = setTimeout(() => {
         setBaseY(`${25 + Math.random() * 50}%`);
-        // Random subtle drift: -3% to +3% (up or down)
         const drift = (Math.random() - 0.5) * 6;
         setSwimDrift(`${drift}%`);
         setIsSwimming(true);
@@ -117,15 +174,27 @@ export default function DriftingSwimmer({
             transition: "opacity 2s ease-in-out",
           } as React.CSSProperties}
         >
-          <Image
-            src={imagePath}
-            alt={name}
-            width={w}
-            height={h}
-            unoptimized
-            className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-            style={{ objectFit: "contain" }}
-          />
+          {isAnimated ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              ref={setImgRef}
+              alt={name}
+              width={w}
+              height={h}
+              className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+              style={{ objectFit: "contain", width: w, height: h }}
+            />
+          ) : (
+            <Image
+              src={imagePath}
+              alt={name}
+              width={w}
+              height={h}
+              unoptimized
+              className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+              style={{ objectFit: "contain" }}
+            />
+          )}
         </div>
       </div>
     </div>

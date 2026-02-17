@@ -15,22 +15,24 @@ import DriftingElement from "@/components/DriftingElement";
 import DriftingSwimmer from "@/components/DriftingSwimmer";
 
 // Vertical floaters: bottom-to-top, rare appearances (60-120s between). Stagger initials over ~5 min.
+// Looped sequences: position-stabilized, trimmed to smooth loops, sequential numbering from 1.
 const DRIFTING_ELEMENTS = [
   { imagePath: "/stills/moon.png", name: "Moon", minDelay: 0, maxDelay: 30000, minScale: 0.3, maxScale: 2, zIndex: 5 },
   { imagePath: "/stills/jacket.png", name: "Jacket", minDelay: 30000, maxDelay: 60000, minScale: 0.3, maxScale: 2, zIndex: 6 },
-  { imagePath: "/stills/Otherworldly.png", name: "Otherworldly", minDelay: 60000, maxDelay: 90000, minScale: 0.3, maxScale: 2, zIndex: 7 },
-  { imagePath: "/stills/gramophone.png", name: "Gramophone", minDelay: 90000, maxDelay: 120000, minScale: 0.3, maxScale: 2, zIndex: 8 },
-  { imagePath: "/stills/ladder.png", name: "Ladder", minDelay: 120000, maxDelay: 150000, minScale: 0.3, maxScale: 2, zIndex: 9 },
-  { imagePath: "/stills/ladders.png", name: "Ladders", minDelay: 150000, maxDelay: 180000, minScale: 0.3, maxScale: 2, zIndex: 10 },
-  { imagePath: "/stills/whale%20back.png", name: "Whale Back", minDelay: 180000, maxDelay: 210000, minScale: 0.3, maxScale: 2, zIndex: 11 },
-  { imagePath: "/stills/x%20fall.png", name: "X Fall", minDelay: 210000, maxDelay: 300000, minScale: 0.3, maxScale: 2, zIndex: 12 },
+  { imagePath: "/sequences_looped/embrace/frame_0001.png", name: "Embrace", minDelay: 60000, maxDelay: 90000, minScale: 0.3, maxScale: 2, zIndex: 7, sequenceFolder: "/sequences_looped/embrace", frameStart: 1, frameEnd: 98 },
+  { imagePath: "/sequences_looped/gramophone/frame_0001.png", name: "Gramophone", minDelay: 90000, maxDelay: 120000, minScale: 0.3, maxScale: 2, zIndex: 8, sequenceFolder: "/sequences_looped/gramophone", frameStart: 1, frameEnd: 20 },
+  { imagePath: "/sequences_looped/ladder/frame_0001.png", name: "Ladder", minDelay: 120000, maxDelay: 150000, minScale: 0.3, maxScale: 2, zIndex: 9, sequenceFolder: "/sequences_looped/ladder", frameStart: 1, frameEnd: 14 },
+  { imagePath: "/sequences_looped/books/frame_0001.png", name: "Books", minDelay: 150000, maxDelay: 180000, minScale: 0.3, maxScale: 2, zIndex: 10, sequenceFolder: "/sequences_looped/books", frameStart: 1, frameEnd: 42 },
+  { imagePath: "/sequences_looped/teddy/frame_0001.png", name: "Teddy", minDelay: 180000, maxDelay: 210000, minScale: 0.3, maxScale: 2, zIndex: 11, sequenceFolder: "/sequences_looped/teddy", frameStart: 1, frameEnd: 48 },
+  { imagePath: "/stills/whale%20back.png", name: "Whale Back", minDelay: 210000, maxDelay: 240000, minScale: 0.3, maxScale: 2, zIndex: 12 },
+  { imagePath: "/stills/x%20fall.png", name: "X Fall", minDelay: 240000, maxDelay: 300000, minScale: 0.3, maxScale: 2, zIndex: 13 },
 ];
 
 // Horizontal swimmers: left-to-right with subtle drift. Spaced 90-180s between.
+// Looped sequences with position-stabilized frames for smooth looping.
 const SWIMMING_ELEMENTS = [
-  { imagePath: "/stills/fish%201.png", name: "Fish 1", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 0.5, zIndex: 4 },
-  { imagePath: "/stills/fish%202.png", name: "Fish 2", minDelay: 70000, maxDelay: 130000, sizeMultiplier: 0.5, zIndex: 4 },
-  { imagePath: "/stills/whale.png", name: "Whale", minDelay: 120000, maxDelay: 200000, sizeMultiplier: 2, zIndex: 4 },
+  { imagePath: "/sequences_looped/fish/frame_0001.png", name: "Fish", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 0.7, zIndex: 4, sequenceFolder: "/sequences_looped/fish", frameStart: 1, frameEnd: 14 },
+  { imagePath: "/sequences_looped/whale/frame_0001.png", name: "Whale", minDelay: 120000, maxDelay: 200000, sizeMultiplier: 2, zIndex: 4, sequenceFolder: "/sequences_looped/whale", frameStart: 1, frameEnd: 26 },
 ];
 
 export default function Home() {
