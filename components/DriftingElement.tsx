@@ -64,6 +64,8 @@ export default function DriftingElement({
 
   const animImgRef = useRef<HTMLImageElement | null>(null);
   const frameIndexRef = useRef(0);
+  const frameDirRef = useRef(1);
+  const fadeCounterRef = useRef(0);
 
   const framePaths = useMemo(() => {
     if (!sequenceFolder) return [];
@@ -85,18 +87,36 @@ export default function DriftingElement({
     });
   }, [framePaths, isAnimated]);
 
-  // Cycle frames at fps while drifting (direct DOM, no re-renders)
+  // Cycle frames at fps while drifting (ping-pong with crossfade at reversal)
   useEffect(() => {
     if (!isDrifting || !isAnimated || framePaths.length === 0) {
       frameIndexRef.current = 0;
+      frameDirRef.current = 1;
+      fadeCounterRef.current = 0;
       return;
     }
     const intervalMs = 1000 / fps;
+    const last = framePaths.length - 1;
+    const FADE_FRAMES = 3;
     const interval = setInterval(() => {
-      frameIndexRef.current =
-        (frameIndexRef.current + 1) % framePaths.length;
+      const next = frameIndexRef.current + frameDirRef.current;
+      if (next > last) {
+        frameDirRef.current = -1;
+        fadeCounterRef.current = FADE_FRAMES;
+      } else if (next < 0) {
+        frameDirRef.current = 1;
+        fadeCounterRef.current = FADE_FRAMES;
+      }
+      frameIndexRef.current += frameDirRef.current;
       if (animImgRef.current) {
         animImgRef.current.src = framePaths[frameIndexRef.current];
+        if (fadeCounterRef.current > 0) {
+          const t = fadeCounterRef.current / FADE_FRAMES;
+          animImgRef.current.style.opacity = String(0.7 + 0.3 * (1 - t));
+          fadeCounterRef.current--;
+        } else {
+          animImgRef.current.style.opacity = "1";
+        }
       }
     }, intervalMs);
     return () => clearInterval(interval);

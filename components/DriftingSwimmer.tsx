@@ -14,6 +14,7 @@ export interface DriftingSwimmerConfig {
   frameStart?: number;
   frameEnd?: number;
   fps?: number;
+  flipY?: boolean;
 }
 
 interface DriftingSwimmerProps extends DriftingSwimmerConfig {
@@ -37,6 +38,7 @@ export default function DriftingSwimmer({
   frameStart = 1,
   frameEnd = 1,
   fps = 12,
+  flipY = false,
 }: DriftingSwimmerProps) {
   const [isSwimming, setIsSwimming] = useState(false);
   const [baseY, setBaseY] = useState("40%");
@@ -47,6 +49,8 @@ export default function DriftingSwimmer({
 
   const animImgRef = useRef<HTMLImageElement | null>(null);
   const frameIndexRef = useRef(0);
+  const frameDirRef = useRef(1);
+  const fadeCounterRef = useRef(0);
 
   const framePaths = useMemo(() => {
     if (!sequenceFolder) return [];
@@ -68,18 +72,36 @@ export default function DriftingSwimmer({
     });
   }, [framePaths, isAnimated]);
 
-  // Cycle frames at fps while swimming (direct DOM, no re-renders)
+  // Cycle frames at fps while swimming (ping-pong with crossfade at reversal)
   useEffect(() => {
     if (!isSwimming || !isAnimated || framePaths.length === 0) {
       frameIndexRef.current = 0;
+      frameDirRef.current = 1;
+      fadeCounterRef.current = 0;
       return;
     }
     const intervalMs = 1000 / fps;
+    const last = framePaths.length - 1;
+    const FADE_FRAMES = 3;
     const interval = setInterval(() => {
-      frameIndexRef.current =
-        (frameIndexRef.current + 1) % framePaths.length;
+      const next = frameIndexRef.current + frameDirRef.current;
+      if (next > last) {
+        frameDirRef.current = -1;
+        fadeCounterRef.current = FADE_FRAMES;
+      } else if (next < 0) {
+        frameDirRef.current = 1;
+        fadeCounterRef.current = FADE_FRAMES;
+      }
+      frameIndexRef.current += frameDirRef.current;
       if (animImgRef.current) {
         animImgRef.current.src = framePaths[frameIndexRef.current];
+        if (fadeCounterRef.current > 0) {
+          const t = fadeCounterRef.current / FADE_FRAMES;
+          animImgRef.current.style.opacity = String(0.7 + 0.3 * (1 - t));
+          fadeCounterRef.current--;
+        } else {
+          animImgRef.current.style.opacity = "1";
+        }
       }
     }, intervalMs);
     return () => clearInterval(interval);
@@ -182,7 +204,7 @@ export default function DriftingSwimmer({
               width={w}
               height={h}
               className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-              style={{ objectFit: "contain", width: w, height: h }}
+              style={{ objectFit: "contain", width: w, height: h, transform: flipY ? "scaleY(-1)" : undefined }}
             />
           ) : (
             <Image
@@ -192,7 +214,7 @@ export default function DriftingSwimmer({
               height={h}
               unoptimized
               className="opacity-55 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-              style={{ objectFit: "contain" }}
+              style={{ objectFit: "contain", transform: flipY ? "scaleY(-1)" : undefined }}
             />
           )}
         </div>
