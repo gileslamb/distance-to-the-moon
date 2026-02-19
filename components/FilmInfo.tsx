@@ -37,21 +37,21 @@ const LAURELS = [
 ];
 
 const FESTIVAL_SELECTIONS = [
-  { date: "Feb 2025", name: "Athens Animfest" },
-  { date: "May 2025", name: "Stop-eMotion, Venice" },
-  { date: "Jun 2025", name: "DUMBO Film Festival, NYC" },
-  { date: "Aug 2025", name: "Edinburgh International Film Festival" },
-  { date: "Oct 2025", name: "Animaze — Montreal International Animation Film Festival" },
-  { date: "Oct 2025", name: "Banjaluka International Animated Film Festival" },
-  { date: "Oct 2025", name: "PÖFF Shorts" },
-  { date: "Oct 2025", name: "Trieste Science+Fiction Festival" },
-  { date: "Oct 2025", name: "IndieCork Film Festival" },
-  { date: "Nov 2025", name: "Edinburgh Short Film Festival" },
-  { date: "Nov 2025", name: "Glasgow International Film Festival" },
-  { date: "2026", name: "Portland EcoFilm Festival" },
-  { date: "Feb 2026", name: "Liverpool Film Festival" },
-  { date: "Feb 2026", name: "Manipulate Film Festival" },
-  { date: "Feb 2026", name: "Glasgow Short Film Festival" },
+  "Athens Animfest",
+  "Stop-eMotion, Venice",
+  "DUMBO Film Festival, NYC",
+  "Edinburgh International Film Festival",
+  "Animaze — Montreal International Animation Film Festival",
+  "Banjaluka International Animated Film Festival",
+  "PÖFF Shorts",
+  "Trieste Science+Fiction Festival",
+  "IndieCork Film Festival",
+  "Edinburgh Short Film Festival",
+  "Glasgow International Film Festival",
+  "Portland EcoFilm Festival",
+  "Liverpool Film Festival",
+  "Manipulate Film Festival",
+  "Glasgow Short Film Festival",
 ];
 
 const AWARDS = [
@@ -67,14 +67,14 @@ const FILM_CREDITS_ENTRIES: Array<{ label: string; content: string }> = [
   { label: "DISTANCE TO THE MOON - FILM CREDITS", content: "" },
   { label: "Presented by:", content: "Short Circuit & Eyebolls & Curious Dreamers" },
   { label: "In Association with:", content: "Creative Scotland\nBFI Network" },
-  { label: "Producers:", content: "Rhona Drummond\nGiles Lamb" },
-  { label: "Executive Producers (Creative Scotland):", content: "Sean Greenhorn" },
-  { label: "Executive Producers (Short Circuit):", content: "Gillian Berrie\nTiernan Kelly\nMiriam Newman\nWilma Smith" },
   { label: "Original Concept:", content: "Curious Dreamers" },
   { label: "Writer:", content: "Sacha Kyle" },
   { label: "Co-Directors:", content: "Sacha Kyle\nVictoria Watson" },
   { label: "Music & Sound Design:", content: "Giles Lamb" },
   { label: "Art Director:", content: "Victoria Watson" },
+  { label: "Producers:", content: "Rhona Drummond\nGiles Lamb" },
+  { label: "Executive Producers (Creative Scotland):", content: "Sean Greenhorn" },
+  { label: "Executive Producers (Short Circuit):", content: "Gillian Berrie\nTiernan Kelly\nMiriam Newman\nWilma Smith" },
   { label: "Storyboards:", content: "Sam Horton" },
   { label: "Animatic Editor:", content: "Victoria Watson" },
   { label: "Puppet Design & Fabrication:", content: "Rachael Olga Lloyd" },
@@ -160,10 +160,9 @@ function FestivalsAndAwards() {
           Festival Selections
         </h3>
         <div className="space-y-1">
-          {FESTIVAL_SELECTIONS.map((f) => (
-            <div key={`${f.date}-${f.name}`} className="flex gap-3">
-              <span className="text-white/40 text-xs w-20 flex-shrink-0 pt-0.5">{f.date}</span>
-              <span className="text-white/80">{f.name}</span>
+          {FESTIVAL_SELECTIONS.map((name) => (
+            <div key={name}>
+              <span className="text-white/80">{name}</span>
             </div>
           ))}
         </div>

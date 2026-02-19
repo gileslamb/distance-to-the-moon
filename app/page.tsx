@@ -31,7 +31,7 @@ const DRIFTING_ELEMENTS = [
 // Horizontal swimmers: left-to-right with subtle drift. Spaced 90-180s between.
 // Looped sequences with position-stabilized frames for smooth looping.
 const SWIMMING_ELEMENTS = [
-  { imagePath: "/sequences_looped/fish/frame_0001.png", name: "Fish", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 0.7, zIndex: 4, sequenceFolder: "/sequences_looped/fish", frameStart: 1, frameEnd: 7, fps: 6 },
+  { imagePath: "/sequences_looped/fish/frame_0001.png", name: "Fish", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 1.2, zIndex: 4, sequenceFolder: "/sequences_looped/fish", frameStart: 1, frameEnd: 7, fps: 6 },
   { imagePath: "/sequences_looped/whale/frame_0001.png", name: "Whale", minDelay: 120000, maxDelay: 200000, sizeMultiplier: 2, zIndex: 4, sequenceFolder: "/sequences_looped/whale", frameStart: 1, frameEnd: 26, fps: 6, flipY: true },
   { imagePath: "/sequences_looped/fish_shoal/frame_0001.png", name: "Fish Shoal", minDelay: 60000, maxDelay: 140000, sizeMultiplier: 6, zIndex: 4, sequenceFolder: "/sequences_looped/fish_shoal", frameStart: 1, frameEnd: 68, fps: 8 },
 ];
