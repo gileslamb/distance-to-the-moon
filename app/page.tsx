@@ -23,7 +23,7 @@ const DRIFTING_ELEMENTS = [
   { imagePath: "/sequences_looped/gramophone/frame_0001.png", name: "Gramophone", minDelay: 90000, maxDelay: 120000, minScale: 0.3, maxScale: 2, zIndex: 8, sequenceFolder: "/sequences_looped/gramophone", frameStart: 1, frameEnd: 20 },
   { imagePath: "/stills/ladder.png", name: "Ladder", minDelay: 120000, maxDelay: 150000, minScale: 0.3, maxScale: 2, zIndex: 9 },
   { imagePath: "/sequences_looped/books/frame_0001.png", name: "Books", minDelay: 150000, maxDelay: 180000, minScale: 0.3, maxScale: 2, zIndex: 10, sequenceFolder: "/sequences_looped/books", frameStart: 1, frameEnd: 21, fps: 8 },
-  { imagePath: "/sequences_looped/teddy/frame_0001.png", name: "Teddy", minDelay: 180000, maxDelay: 210000, minScale: 0.3, maxScale: 2, zIndex: 11, sequenceFolder: "/sequences_looped/teddy", frameStart: 1, frameEnd: 10, fps: 4 },
+  { imagePath: "/sequences_looped/teddy/frame_0004.png", name: "Teddy", minDelay: 180000, maxDelay: 210000, minScale: 0.2, maxScale: 1.2, zIndex: 11, sequenceFolder: "/sequences_looped/teddy", frameStart: 4, frameEnd: 10, fps: 4 },
   { imagePath: "/sequences_looped/satellite/frame_0001.png", name: "Satellite", minDelay: 240000, maxDelay: 270000, minScale: 0.3, maxScale: 2, zIndex: 13, sequenceFolder: "/sequences_looped/satellite", frameStart: 1, frameEnd: 66, fps: 8 },
   { imagePath: "/stills/x%20fall.png", name: "X Fall", minDelay: 270000, maxDelay: 330000, minScale: 0.3, maxScale: 2, zIndex: 14 },
 ];
@@ -33,7 +33,7 @@ const DRIFTING_ELEMENTS = [
 const SWIMMING_ELEMENTS = [
   { imagePath: "/sequences_looped/fish/frame_0001.png", name: "Fish", minDelay: 20000, maxDelay: 80000, sizeMultiplier: 0.7, zIndex: 4, sequenceFolder: "/sequences_looped/fish", frameStart: 1, frameEnd: 7, fps: 6 },
   { imagePath: "/sequences_looped/whale/frame_0001.png", name: "Whale", minDelay: 120000, maxDelay: 200000, sizeMultiplier: 2, zIndex: 4, sequenceFolder: "/sequences_looped/whale", frameStart: 1, frameEnd: 26, fps: 6, flipY: true },
-  { imagePath: "/sequences_looped/fish_shoal/frame_0001.png", name: "Fish Shoal", minDelay: 60000, maxDelay: 140000, sizeMultiplier: 4, zIndex: 4, sequenceFolder: "/sequences_looped/fish_shoal", frameStart: 1, frameEnd: 68, fps: 8 },
+  { imagePath: "/sequences_looped/fish_shoal/frame_0001.png", name: "Fish Shoal", minDelay: 60000, maxDelay: 140000, sizeMultiplier: 6, zIndex: 4, sequenceFolder: "/sequences_looped/fish_shoal", frameStart: 1, frameEnd: 68, fps: 8 },
 ];
 
 export default function Home() {

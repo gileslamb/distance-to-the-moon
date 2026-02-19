@@ -67,12 +67,12 @@ const FILM_CREDITS_ENTRIES: Array<{ label: string; content: string }> = [
   { label: "DISTANCE TO THE MOON - FILM CREDITS", content: "" },
   { label: "Presented by:", content: "Short Circuit & Eyebolls & Curious Dreamers" },
   { label: "In Association with:", content: "Creative Scotland\nBFI Network" },
-  { label: "Executive Producers (Short Circuit):", content: "Gillian Berrie\nTiernan Kelly\nMiriam Newman\nWilma Smith" },
+  { label: "Producers:", content: "Rhona Drummond\nGiles Lamb" },
   { label: "Executive Producers (Creative Scotland):", content: "Sean Greenhorn" },
+  { label: "Executive Producers (Short Circuit):", content: "Gillian Berrie\nTiernan Kelly\nMiriam Newman\nWilma Smith" },
   { label: "Original Concept:", content: "Curious Dreamers" },
   { label: "Writer:", content: "Sacha Kyle" },
   { label: "Co-Directors:", content: "Sacha Kyle\nVictoria Watson" },
-  { label: "Producers:", content: "Rhona Drummond\nGiles Lamb" },
   { label: "Music & Sound Design:", content: "Giles Lamb" },
   { label: "Art Director:", content: "Victoria Watson" },
   { label: "Storyboards:", content: "Sam Horton" },
@@ -182,7 +182,7 @@ export default function FilmInfo({ onBackToHome, sensitivity = 0.33 }: FilmInfoP
     >
       {view === "poster" ? (
         <InlineDriftingImage
-          src="/DTTM%20POSTERV7.jpg"
+          src="/dttm-poster-12.jpg"
           alt="Film Poster"
           onBack={() => setView("info")}
           sensitivity={sensitivity}
