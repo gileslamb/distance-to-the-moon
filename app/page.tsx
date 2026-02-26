@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SoundscapeManager } from "@/lib/soundscapeManager";
 import Starfield from "@/components/Starfield";
 import StarSizeControl from "@/components/StarSizeControl";
 import StarSpeedControl from "@/components/StarSpeedControl";
 import MouseSensitivityControl from "@/components/MouseSensitivityControl";
-import MusicPlayer from "@/components/MusicPlayer";
+import MusicPlayer, { type MusicPlayerControls, type MusicPlayerState } from "@/components/MusicPlayer";
 import MusicControls from "@/components/MusicControls";
 import NavigationMenu, { type View } from "@/components/NavigationMenu";
 import FilmInfo from "@/components/FilmInfo";
@@ -43,10 +43,17 @@ export default function Home() {
   const [mouseSensitivity, setMouseSensitivity] = useState(0.33);
   const [view, setView] = useState<View>("home");
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [playRequest, setPlayRequest] = useState(0);
+  const [playRequest] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [starfieldKey, setStarfieldKey] = useState(0);
+  const [playerState, setPlayerState] = useState<MusicPlayerState>({
+    isPlaying: false,
+    currentTime: 0,
+    duration: 0,
+    currentTrackIndex: 0,
+  });
+  const [playerControls, setPlayerControls] = useState<MusicPlayerControls | null>(null);
   const soundscapeRef = useRef<SoundscapeManager | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -72,11 +79,15 @@ export default function Home() {
     if (backgroundAudioRef.current) backgroundAudioRef.current.muted = isMuted;
   }, [isMuted, soundscape]);
 
-  const handlePlayStateChange = (playing: boolean) => {
+  const handlePlayStateChange = useCallback((playing: boolean) => {
     setIsMusicPlaying(playing);
     if (playing) soundscape.fadeOut();
     else soundscape.fadeIn();
-  };
+  }, [soundscape]);
+
+  const handleControlsReady = useCallback((controls: MusicPlayerControls) => {
+    setPlayerControls((prev) => prev ?? controls);
+  }, []);
 
   useEffect(() => {
     const audio = backgroundAudioRef.current;
@@ -125,12 +136,10 @@ export default function Home() {
       {view === "album" && (
         <AlbumMenu
           currentTrackIndex={currentTrackIndex}
-          onTrackSelect={(index) => {
-            setCurrentTrackIndex(index);
-            setPlayRequest((r) => r + 1);
-          }}
           onBackToHome={() => setView("home")}
           sensitivity={mouseSensitivity}
+          playerState={playerState}
+          playerControls={playerControls}
         />
       )}
 
@@ -140,6 +149,9 @@ export default function Home() {
         onPlayStateChange={handlePlayStateChange}
         playRequest={playRequest}
         isMuted={isMuted}
+        hideUI={view === "album"}
+        onPlaybackState={setPlayerState}
+        onControlsReady={handleControlsReady}
       />
 
       <MusicControls isMuted={isMuted} onMuteToggle={handleMuteToggle} onReseed={handleReseed} />

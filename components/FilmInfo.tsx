@@ -176,8 +176,11 @@ export default function FilmInfo({ onBackToHome, sensitivity = 0.33 }: FilmInfoP
 
   return (
     <div
-      className={`absolute top-24 bottom-20 left-20 right-20 max-w-2xl font-medium text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "poster" ? "bg-black/40" : "bg-black/70"}`}
-      style={{ maxHeight: "calc(100vh - 10rem)" }}
+      className={`absolute bottom-20 left-20 right-20 max-w-2xl font-medium text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "poster" ? "bg-black/40" : "bg-black/70"}`}
+      style={{
+        top: "calc(6rem + var(--announcement-offset, 0px))",
+        maxHeight: "calc(100vh - 10rem - var(--announcement-offset, 0px))",
+      }}
     >
       {view === "poster" ? (
         <InlineDriftingImage

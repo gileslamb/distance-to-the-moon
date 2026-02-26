@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { trackList } from "@/lib/musicData";
 import InlineDriftingImage from "@/components/InlineDriftingImage";
 import { TypingText } from "@/components/TypingText";
+import type { MusicPlayerControls, MusicPlayerState } from "@/components/MusicPlayer";
 
 const GOLD = "#C9A961";
 const TYPING_INTERVAL = 12;
@@ -69,12 +70,19 @@ const ALBUM_ACTION_LINKS = [
 
 interface AlbumMenuProps {
   currentTrackIndex: number;
-  onTrackSelect: (index: number) => void;
   onBackToHome?: () => void;
   sensitivity?: number;
+  playerState: MusicPlayerState;
+  playerControls: MusicPlayerControls | null;
 }
 
-export default function AlbumMenu({ currentTrackIndex, onTrackSelect, onBackToHome, sensitivity = 0.33 }: AlbumMenuProps) {
+export default function AlbumMenu({
+  currentTrackIndex,
+  onBackToHome,
+  sensitivity = 0.33,
+  playerState,
+  playerControls,
+}: AlbumMenuProps) {
   const [displayLines, setDisplayLines] = useState<string[]>([]);
   const [trackTypingDone, setTrackTypingDone] = useState(false);
   const [view, setView] = useState<"tracks" | "credits" | "cover">("tracks");
@@ -109,8 +117,11 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect, onBackToHo
 
   return (
     <div
-      className={`absolute top-28 bottom-20 left-20 right-20 max-w-md text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "cover" ? "bg-black/40" : "bg-black/70"}`}
-      style={{ maxHeight: "calc(100vh - 10rem)" }}
+      className={`absolute bottom-20 left-20 right-20 max-w-md text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "cover" ? "bg-black/40" : "bg-black/70"}`}
+      style={{
+        top: "calc(6rem + var(--announcement-offset, 0px))",
+        maxHeight: "calc(100vh - 10rem - var(--announcement-offset, 0px))",
+      }}
     >
       {view === "cover" ? (
         <InlineDriftingImage
@@ -134,21 +145,55 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect, onBackToHo
           {view === "tracks" && (
             <>
               <ul className="space-y-2 uppercase">
-                {linesToShow.map((line, i) => (
-                  <li key={i}>
-                    <button
-                      type="button"
-                      onClick={() => onTrackSelect(i)}
-                      className={`w-full text-left px-2 py-2 rounded transition hover:bg-white/10 font-medium hover:underline ${currentTrackIndex === i ? "bg-white/15 underline font-semibold" : ""}`}
-                      style={{ color: GOLD }}
-                    >
-                      {line}
-                      {!trackTypingDone && i === linesToShow.length - 1 && (
-                        <span className="animate-pulse text-white">|</span>
+                {trackList.map((t, i) => {
+                  const line = trackTypingDone ? `${i + 1}. ${t.title}` : (linesToShow[i] ?? "");
+                  const isCurrent = currentTrackIndex === i;
+                  const isPlayingCurrent = isCurrent && playerState.isPlaying;
+                  const duration = playerState.duration || t.duration || 1;
+                  const progress = isCurrent ? Math.max(0, Math.min(1, playerState.currentTime / duration)) : 0;
+                  return (
+                    <li key={t.id} className={`px-2 py-2 rounded transition ${isCurrent ? "bg-white/10" : "hover:bg-white/5"}`}>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!trackTypingDone) return;
+                            if (isPlayingCurrent) playerControls?.pause();
+                            else playerControls?.playTrack(i);
+                          }}
+                          className={`flex-1 text-left font-medium hover:underline ${isCurrent ? "underline font-semibold" : ""}`}
+                          style={{ color: GOLD }}
+                        >
+                          {line}
+                          {!trackTypingDone && i === linesToShow.length - 1 && (
+                            <span className="animate-pulse text-white">|</span>
+                          )}
+                        </button>
+                        {trackTypingDone && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (isPlayingCurrent) playerControls?.pause();
+                              else playerControls?.playTrack(i);
+                            }}
+                            className="text-[10px] px-2 py-1 rounded border border-white/20 bg-white/5 hover:bg-white/10 transition"
+                            style={{ color: GOLD }}
+                          >
+                            {isPlayingCurrent ? "Pause" : "Play"}
+                          </button>
+                        )}
+                      </div>
+                      {trackTypingDone && (
+                        <div className="mt-1 h-[3px] bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-200"
+                            style={{ width: `${progress * 100}%`, backgroundColor: GOLD, opacity: isCurrent ? 0.9 : 0.35 }}
+                          />
+                        </div>
                       )}
-                    </button>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
               <div className="mt-8 pt-6 border-t border-white/20">
                 <div className="flex flex-wrap gap-2">

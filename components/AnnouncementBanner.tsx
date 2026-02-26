@@ -4,6 +4,8 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 
 const GOLD = "#C9A961";
 const RELEASE_TIME_UTC_MS = Date.parse("2026-02-26T00:00:00Z");
+const BANNER_OFFSET_PX = 68;
+const DISMISS_KEY = "dttm-banner-dismissed";
 
 function formatRemaining(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -17,6 +19,20 @@ export default function AnnouncementBanner() {
   const [nowMs, setNowMs] = useState(() => Date.now());
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem(DISMISS_KEY);
+    if (stored === "1") setDismissed(true);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--announcement-offset", dismissed ? "0px" : `${BANNER_OFFSET_PX}px`);
+    return () => root.style.setProperty("--announcement-offset", "0px");
+  }, [dismissed]);
 
   useEffect(() => {
     const id = setInterval(() => setNowMs(Date.now()), 1000);
@@ -35,9 +51,24 @@ export default function AnnouncementBanner() {
     setSubmitted(true);
   };
 
+  const handleDismiss = () => {
+    sessionStorage.setItem(DISMISS_KEY, "1");
+    setDismissed(true);
+  };
+
+  if (!hydrated || dismissed) return null;
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[60] border-b border-white/10 bg-[#05070f]/95 backdrop-blur-sm">
-      <div className="h-9 px-4 md:px-8 flex items-center justify-center text-[11px] md:text-xs tracking-wide text-white/85">
+      <button
+        type="button"
+        aria-label="Dismiss announcement"
+        onClick={handleDismiss}
+        className="absolute right-3 top-2 text-white/45 hover:text-white/80 transition-colors text-sm leading-none"
+      >
+        ×
+      </button>
+      <div className="h-9 px-4 md:px-8 pr-10 flex items-center justify-center text-[11px] md:text-xs tracking-wide text-white/85">
         {!isReleased ? (
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
             <span>The album arrives at midnight —</span>
