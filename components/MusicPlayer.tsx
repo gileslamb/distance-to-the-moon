@@ -120,7 +120,7 @@ export default function MusicPlayer({
   const hasStartedPlayback = displayTitle.length > 0 || isPlaying;
 
   return (
-    <div className="fixed top-8 left-8 flex flex-col gap-2 font-medium text-sm text-white brightness-150 tracking-wider uppercase backdrop-blur-[2px] bg-black/60 rounded-lg px-4 py-3">
+    <div className="fixed top-20 left-8 flex flex-col gap-2 font-medium text-sm text-white brightness-150 tracking-wider uppercase backdrop-blur-[2px] bg-black/60 rounded-lg px-4 py-3">
       <audio ref={audioRef} preload="metadata" />
       {!hasStartedPlayback ? (
         <button

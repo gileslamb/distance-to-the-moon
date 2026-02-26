@@ -52,7 +52,20 @@ function buildAlbumCreditsTextAndRanges() {
 
 const { fullText: ALBUM_CREDITS_TEXT, goldRanges: ALBUM_CREDITS_GOLD_RANGES, linkRanges: ALBUM_CREDITS_LINK_RANGES } = buildAlbumCreditsTextAndRanges();
 
-const STREAM_BUY_TEXT = "Stream / Buy: Spotify | Bandcamp";
+const ALBUM_ACTION_LINKS = [
+  {
+    label: "Pre-Save on Streaming",
+    href: "https://orcd.co/dttmostpresave",
+  },
+  {
+    label: "Stream Now",
+    href: "https://orcd.co/tdttmost",
+  },
+  {
+    label: "Buy on Bandcamp",
+    href: "https://gileslamb.bandcamp.com/album/the-distance-to-the-moon-original-motion-picture-soundtrack",
+  },
+];
 
 interface AlbumMenuProps {
   currentTrackIndex: number;
@@ -96,7 +109,7 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect, onBackToHo
 
   return (
     <div
-      className={`absolute top-24 bottom-20 left-20 right-20 max-w-md text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "cover" ? "bg-black/40" : "bg-black/70"}`}
+      className={`absolute top-28 bottom-20 left-20 right-20 max-w-md text-sm text-white backdrop-blur-[2px] border border-white/20 rounded-lg p-6 tracking-wider overflow-auto flex flex-col ${view === "cover" ? "bg-black/40" : "bg-black/70"}`}
       style={{ maxHeight: "calc(100vh - 10rem)" }}
     >
       {view === "cover" ? (
@@ -137,15 +150,20 @@ export default function AlbumMenu({ currentTrackIndex, onTrackSelect, onBackToHo
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 pt-6 border-t border-white/20 text-xs tracking-widest font-medium space-y-2">
-                <TypingText text={STREAM_BUY_TEXT} goldColor={GOLD} />
-                <div className="flex gap-2 mt-2">
-                  <a href="#" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: GOLD }}>
-                    Spotify
-                  </a>
-                  <a href="#" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: GOLD }}>
-                    Bandcamp
-                  </a>
+              <div className="mt-8 pt-6 border-t border-white/20">
+                <div className="flex flex-wrap gap-2">
+                  {ALBUM_ACTION_LINKS.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded border border-white/25 bg-white/5 hover:bg-white/10 hover:border-white/40 transition text-[11px] tracking-widest uppercase"
+                      style={{ color: GOLD }}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
                 </div>
               </div>
               <div className="mt-6 flex flex-wrap gap-3">

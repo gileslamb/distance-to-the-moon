@@ -13,6 +13,7 @@ import FilmInfo from "@/components/FilmInfo";
 import AlbumMenu from "@/components/AlbumMenu";
 import DriftingElement from "@/components/DriftingElement";
 import DriftingSwimmer from "@/components/DriftingSwimmer";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 // Vertical floaters: bottom-to-top, rare appearances (60-120s between). Stagger initials over ~5 min.
 // Looped sequences: position-stabilized, trimmed to smooth loops, sequential numbering from 1.
@@ -93,6 +94,7 @@ export default function Home() {
 
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">
+      <AnnouncementBanner />
       <Starfield key={starfieldKey} mood="relaxed" sizeMultiplier={starSizeMultiplier} speedMultiplier={starSpeedMultiplier} sensitivity={mouseSensitivity} />
       {SWIMMING_ELEMENTS.map((el) => (
         <DriftingSwimmer

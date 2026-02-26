@@ -7,7 +7,7 @@ interface MouseSensitivityControlProps {
 
 export default function MouseSensitivityControl({ sensitivity, onSensitivityChange }: MouseSensitivityControlProps) {
   return (
-    <div className="absolute top-8 right-48 flex flex-col items-center gap-2 text-white font-thin bg-transparent">
+    <div className="absolute top-20 right-48 flex flex-col items-center gap-2 text-white font-thin bg-transparent">
       <span className="uppercase opacity-100 text-xs tracking-wide">SENSITIVITY</span>
       <div className="h-24 w-6 flex items-center justify-center">
         <input
