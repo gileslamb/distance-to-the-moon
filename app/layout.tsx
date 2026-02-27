@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/dttm-poster-12.jpg",
+        url: "https://www.distancetothemoonfilm.com/dttm-poster-12.jpg",
         alt: "Distance to the Moon film poster",
       },
     ],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Distance to the Moon",
     description: "Experience the award-winning stop-motion film and original soundtrack. An immersive journey inspired by Italo Calvino.",
-    images: ["/dttm-poster-12.jpg"],
+    images: ["https://www.distancetothemoonfilm.com/dttm-poster-12.jpg"],
   },
 };
 
