@@ -55,10 +55,6 @@ const { fullText: ALBUM_CREDITS_TEXT, goldRanges: ALBUM_CREDITS_GOLD_RANGES, lin
 
 const ALBUM_ACTION_LINKS = [
   {
-    label: "Pre-Save on Streaming",
-    href: "https://orcd.co/dttmostpresave",
-  },
-  {
     label: "Stream Now",
     href: "https://orcd.co/tdttmost",
   },
