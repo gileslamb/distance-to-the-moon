@@ -14,7 +14,26 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Distance to the Moon",
-  description: "An atmospheric stop-motion universe of drifting objects, cosmic solitude, and music from Distance to the Moon.",
+  description: "Experience the award-winning stop-motion film and original soundtrack. An immersive journey inspired by Italo Calvino.",
+  openGraph: {
+    title: "Distance to the Moon",
+    description: "Experience the award-winning stop-motion film and original soundtrack. An immersive journey inspired by Italo Calvino.",
+    url: "https://www.distancetothemoonfilm.com",
+    siteName: "Distance to the Moon",
+    type: "website",
+    images: [
+      {
+        url: "/dttm-poster-12.jpg",
+        alt: "Distance to the Moon film poster",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Distance to the Moon",
+    description: "Experience the award-winning stop-motion film and original soundtrack. An immersive journey inspired by Italo Calvino.",
+    images: ["/dttm-poster-12.jpg"],
+  },
 };
 
 export default function RootLayout({
