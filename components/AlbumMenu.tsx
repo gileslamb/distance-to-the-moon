@@ -20,7 +20,7 @@ const ALBUM_CREDITS_ENTRIES: Array<{ label: string; content: string }> = [
   { label: "Musicians/Performers:", content: "" },
   { label: "Tracks 1-11:", content: "Giles Lamb" },
   { label: "Tracks 1, 2, 8:", content: "Nino Racco (Vocal)" },
-  { label: "Track 7:", content: "Lorenzo Carraffe (Spoken Word)" },
+  { label: "Track 7:", content: "Lorenzo Caraffa (Spoken Word)" },
 ];
 
 function buildAlbumCreditsTextAndRanges() {
